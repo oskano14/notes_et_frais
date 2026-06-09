@@ -1,1 +1,20 @@
-Prompt utilisateur envoyé avec l'image
+Voici l'image d'une note de frais, d'un ticket de caisse ou d'une facture.
+
+Analyse attentivement ce document et extrais les informations pour remplir la structure JSON ci-dessous. 
+Voici la description et le type attendu pour chaque champ :
+
+{
+  "horodatage": "Type: chaîne (string). L'heure de la transaction au format HH:MM. Si introuvable, mettre null.",
+  "type": "Type: chaîne (string). Le type de dépense. Valeurs possibles suggérées : 'restaurant', 'transport', 'logement', 'fournitures', 'autre'.",
+  "fournisseur": "Type: chaîne (string). Le nom de l'enseigne, du commerçant ou de l'entreprise.",
+  "date": "Type: chaîne (string). La date de la transaction au format ISO : YYYY-MM-DD.",
+  "montant_ttc": "Type: nombre (float). Le montant total TTC en chiffres (ex: 15.50).",
+  "tva": "Type: nombre (float). Le montant total de la TVA en chiffres. Si aucune TVA n'est visible, mettre null.",
+  "devise": "Type: chaîne (string). Le code de la devise en 3 lettres (ex: 'EUR' pour les euros, 'USD', 'GBP').",
+  "description": "Type: chaîne (string). Une brève description des articles achetés ou de la nature du service.",
+  "confiance": "Type: chaîne (string). Votre niveau de certitude globale concernant l'extraction. Valeurs possibles : 'haute', 'moyenne', 'basse'.",
+  "image": "Type: chaîne (string). Une courte description de l'aspect physique du document (ex: 'ticket de caisse de supermarché', 'facture A4 imprimée')."
+}
+
+Assure-toi que les clés du JSON correspondent exactement à celles-ci.
+Si une information n'est pas présente ou illisible, n'invente rien : assigne impérativement la valeur null au champ.
