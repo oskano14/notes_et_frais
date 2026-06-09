@@ -58,9 +58,7 @@ class ExpenseAgent:
             extracted_data = json.loads(response_content)
         except json.JSONDecodeError:
             extracted_data = {}
-
-        # 5. Validation et sécurisation des clés
-        # L'énoncé demande de valider que tous les champs sont présents pour ne pas faire planter le frontend
+        # on valide que tous les champs sont présents pour ne pas faire planter le frontend
         expected_fields = [
             "horodatage", "type", "fournisseur", "date", "montant_ttc", 
             "tva", "devise", "description", "confiance", "image"
