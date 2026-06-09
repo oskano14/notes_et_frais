@@ -1,4 +1,4 @@
-# 🧾 Expense Tracker IA
+# 🧾 Expense Tracker IA - ticket-fast  V1.0.0
 
 ## 🎯 Contexte et But de l'Application
 
