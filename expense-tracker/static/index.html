@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Tracker - Analyse IA</title>
+    <title>Expense Tracker IA - Ticket-Fast</title>
     <!-- Chargement de HTMX depuis unpkg -->
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
     
@@ -15,26 +15,39 @@
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 40px 20px;
+        }
+        
+        .main-wrapper {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            gap: 30px;
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 900px) {
+            .main-wrapper { flex-direction: column; }
         }
         
         .container {
-            width: 100%;
-            max-width: 650px;
             background: #1e1e1e;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            box-sizing: border-box;
         }
         
-        h1 {
-            text-align: center;
+        .upload-column { flex: 1; min-width: 350px; }
+        .history-column { flex: 1.5; min-width: 400px; }
+        
+        h1, h2, h3 {
             color: #ffffff;
             margin-top: 0;
-            font-size: 2rem;
         }
+        
+        h1 { font-size: 2rem; text-align: center; }
         
         .subtitle {
             text-align: center;
@@ -150,34 +163,73 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Expense Tracker</h1>
-        <p class="subtitle">Automatisez vos notes de frais avec l'IA</p>
-        
-        <!-- Le formulaire principal (Upload vers /api/analyze) -->
-        <form id="upload-form" hx-post="/api/analyze" hx-encoding="multipart/form-data" hx-target="#confirmation-container" hx-indicator="#loading">
-            
-            <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
-                <p>📸 Prendre une photo / Choisir un fichier</p>
-                <input type="file" id="file-input" name="file" accept="image/*" required>
-            </div>
-            
-            <div class="preview-container" id="preview-container">
-                <img id="image-preview" src="" alt="Aperçu du reçu">
-                <button type="button" class="btn btn-outline" id="reset-btn">Changer d'image</button>
-            </div>
-            
-            <!-- Soumet le formulaire à HTMX (analyze) -->
-            <button type="submit" class="btn" id="analyze-btn" style="display: none;">Analyser le reçu</button>
-            
-            <!-- Indicateur de chargement HTMX -->
-            <div id="loading" class="htmx-indicator">
-                ⏳ Analyse de la facture en cours par l'IA...
-            </div>
-        </form>
 
-        <!-- Zone ciblée par HTMX : contiendra le formulaire pré-rempli puis la confirmation -->
-        <div id="confirmation-container"></div>
+    <div class="main-wrapper">
+        <!-- COLONNE GAUCHE : UPLOAD ET ANALYSE -->
+        <div class="container upload-column">
+            <h1 style="font-size: 1.8rem;">Expense Tracker IA <br><span style="color: #3b82f6; font-size: 1.4rem;">Ticket-Fast</span></h1>
+            <p class="subtitle">Automatisez vos notes de frais avec l'IA</p>
+            
+            <form id="upload-form" hx-post="/api/analyze" hx-encoding="multipart/form-data" hx-target="#confirmation-container" hx-indicator="#loading">
+                
+                <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                    <p>📸 Prendre une photo / Choisir un fichier</p>
+                    <input type="file" id="file-input" name="file" accept="image/*" required>
+                </div>
+                
+                <div class="preview-container" id="preview-container">
+                    <img id="image-preview" src="" alt="Aperçu du reçu">
+                    <button type="button" class="btn btn-outline" id="reset-btn">Changer d'image</button>
+                </div>
+                
+                <button type="submit" class="btn" id="analyze-btn" style="display: none;">Analyser le reçu</button>
+                
+                <div id="loading" class="htmx-indicator">
+                    ⏳ Analyse de la facture en cours par l'IA...
+                </div>
+            </form>
+
+            <div id="confirmation-container"></div>
+        </div>
+
+        <!-- COLONNE DROITE : HISTORIQUE -->
+        <!-- hx-trigger="load, expenseAdded from:body" recharge ce div au chargement et après un ajout -->
+        <div class="container history-column" hx-get="/api/expenses" hx-trigger="load, expenseAdded from:body" hx-target="#history-container" hx-indicator="#history-loading" hx-include="#filter-form">
+            <h2>📜 Historique des tickets</h2>
+            <p style="color: #9ca3af; font-size: 0.9em; margin-top: -10px; margin-bottom: 20px;">Synchronisé avec votre Google Sheets</p>
+            
+            <!-- FILTRES ET EXPORT -->
+            <form id="filter-form" hx-get="/api/expenses" hx-target="#history-container" hx-trigger="change" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;">
+                <input type="date" name="start_date" class="form-control" style="width: auto; padding: 8px;" title="Date de début">
+                <input type="date" name="end_date" class="form-control" style="width: auto; padding: 8px;" title="Date de fin">
+                <select name="category" class="form-control" style="width: auto; padding: 8px;">
+                    <option value="">Toutes les catégories</option>
+                    <option value="restaurant">Restaurant</option>
+                    <option value="transport">Transport</option>
+                    <option value="logement">Logement</option>
+                    <option value="fourniture">Fourniture</option>
+                    <option value="autre">Autre</option>
+                </select>
+                
+                <a href="/api/export-pdf" id="export-pdf-btn" class="btn btn-success" style="width: auto; margin-top: 0; text-decoration: none; padding: 8px 15px;" title="Télécharger le récapitulatif PDF">📄 PDF</a>
+                <a href="/api/export-csv" id="export-csv-btn" class="btn btn-outline" style="width: auto; margin-top: 0; text-decoration: none; padding: 8px 15px; background-color: #202b3c; border-color: #3b82f6;" title="Exporter les données brutes en CSV">📊 CSV</a>
+            </form>
+
+            <script>
+                // Met à jour les URLs d'export avec les filtres actuels
+                document.getElementById('filter-form').addEventListener('change', function() {
+                    const params = new URLSearchParams(new FormData(this)).toString();
+                    document.getElementById('export-pdf-btn').href = '/api/export-pdf?' + params;
+                    document.getElementById('export-csv-btn').href = '/api/export-csv?' + params;
+                });
+            </script>
+            
+            <div id="history-loading" class="htmx-indicator">
+                ⏳ Récupération des données depuis Google Sheets...
+            </div>
+            
+            <div id="history-container"></div>
+        </div>
     </div>
 
     <script src="/static/app.js"></script>

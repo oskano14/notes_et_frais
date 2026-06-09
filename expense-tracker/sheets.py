@@ -90,6 +90,32 @@ class GoogleSheetsClient:
         self.worksheet.append_row(row, value_input_option='USER_ENTERED')
         return True
 
+    def get_all_expenses(self) -> list:
+        """
+        Récupère toutes les lignes du tableur.
+        """
+        try:
+            # Utiliser FORMULA pour pouvoir extraire l'URL de la fonction =IMAGE(...)
+            rows = self.worksheet.get_all_values(value_render_option='FORMULA')
+            # On ignore la première ligne qui correspond souvent aux en-têtes
+            if len(rows) > 1:
+                return rows[1:]
+            return []
+        except Exception as e:
+            print(f"Erreur lors de la récupération des notes de frais : {e}")
+            return []
+
+    def delete_expense(self, row_index: int) -> bool:
+        """
+        Supprime une ligne spécifique du tableur (index basé sur 1).
+        """
+        try:
+            self.worksheet.delete_rows(row_index)
+            return True
+        except Exception as e:
+            print(f"Erreur lors de la suppression de la ligne {row_index} : {e}")
+            return False
+
 
 # ==========================================
 # SCRIPT DE TEST ISOLÉ
