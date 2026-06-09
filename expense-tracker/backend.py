@@ -7,7 +7,7 @@ from groq import Groq
 class ExpenseAgent:
     """Classe ExpenseAgent — logique IA"""
     def __init__(self):
-        load_dotenv()
+        load_dotenv(override=True)
         self.client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
     @staticmethod
