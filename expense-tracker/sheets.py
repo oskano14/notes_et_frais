@@ -18,20 +18,35 @@ class GoogleSheetsClient:
         self.sheet_id = os.environ.get("GOOGLE_SHEET_ID")
         self.credentials_path = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
         
+        import json
+        from google.oauth2.service_account import Credentials
+        
         # Scopes autorisés : on a besoin d'accéder aux tableurs
         self.scopes = [
             "https://www.googleapis.com/auth/spreadsheets"
         ]
         
-        # 1. Validation du fichier de credentials
-        if not self.credentials_path or not os.path.exists(self.credentials_path):
-            raise FileNotFoundError(f"Le fichier JSON du compte de service est introuvable au chemin : {self.credentials_path}")
-            
-        # 2. Création de l'objet d'authentification global
-        self.credentials = Credentials.from_service_account_file(
-            self.credentials_path, 
-            scopes=self.scopes
-        )
+        json_content = os.getenv("GOOGLE_CREDENTIALS_JSON")
+        json_path = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
+        
+        if json_content:
+            # Mode Production (Render) : On lit le JSON directement depuis la variable d'environnement
+            try:
+                creds_dict = json.loads(json_content)
+                self.credentials = Credentials.from_service_account_info(
+                    creds_dict, 
+                    scopes=self.scopes
+                )
+            except Exception as e:
+                raise ValueError(f"Erreur lors du décodage de GOOGLE_CREDENTIALS_JSON: {e}")
+        elif json_path:
+            # Mode Local : On lit le JSON depuis le fichier physique
+            self.credentials = Credentials.from_service_account_file(
+                json_path, 
+                scopes=self.scopes
+            )
+        else:
+            raise ValueError("Aucune configuration trouvée pour Google Credentials (ni JSON direct, ni fichier).")
         
         # 3. Initialisation du client GSpread (pour Google Sheets)
         self.gspread_client = gspread.authorize(self.credentials)
