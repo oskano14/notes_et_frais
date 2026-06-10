@@ -199,7 +199,7 @@
             <p style="color: #9ca3af; font-size: 0.9em; margin-top: -10px; margin-bottom: 20px;">Synchronisé avec votre Google Sheets</p>
             
             <!-- FILTRES ET EXPORT -->
-            <form id="filter-form" hx-get="/api/expenses" hx-target="#history-container" hx-trigger="change delay:500ms" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;">
+            <form id="filter-form" hx-get="/api/expenses" hx-target="#history-container" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;">
                 <span style="color: #9ca3af; font-size: 0.9em;">Du :</span>
                 <input type="date" name="start_date" class="form-control" style="width: auto; padding: 8px;" title="Date de début">
                 <span style="color: #9ca3af; font-size: 0.9em;">Au :</span>
@@ -212,6 +212,8 @@
                     <option value="fourniture">Fourniture</option>
                     <option value="autre">Autre</option>
                 </select>
+                
+                <button type="submit" class="btn btn-outline" style="width: auto; margin-top: 0; padding: 8px 15px; border-color: #3b82f6; color: #3b82f6;">🔎 Filtrer</button>
                 
                 <a href="/api/export-pdf" id="export-pdf-btn" class="btn btn-success" style="width: auto; margin-top: 0; text-decoration: none; padding: 8px 15px;" title="Télécharger le récapitulatif PDF">📄 PDF</a>
                 <a href="/api/export-csv" id="export-csv-btn" class="btn btn-outline" style="width: auto; margin-top: 0; text-decoration: none; padding: 8px 15px; background-color: #202b3c; border-color: #3b82f6;" title="Exporter les données brutes en CSV">📊 CSV</a>
