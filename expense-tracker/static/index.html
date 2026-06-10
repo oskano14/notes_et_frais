@@ -200,7 +200,9 @@
             
             <!-- FILTRES ET EXPORT -->
             <form id="filter-form" hx-get="/api/expenses" hx-target="#history-container" hx-trigger="change" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;">
+                <span style="color: #9ca3af; font-size: 0.9em;">Du :</span>
                 <input type="date" name="start_date" class="form-control" style="width: auto; padding: 8px;" title="Date de début">
+                <span style="color: #9ca3af; font-size: 0.9em;">Au :</span>
                 <input type="date" name="end_date" class="form-control" style="width: auto; padding: 8px;" title="Date de fin">
                 <select name="category" class="form-control" style="width: auto; padding: 8px;">
                     <option value="">Toutes les catégories</option>
